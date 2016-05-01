@@ -63,6 +63,7 @@
     (definition "usageOf")
     (definition "entails")))
 
+
 (defn fetch-rels [word]
   (set (concat 
         (fetch-rels-twinword word)
@@ -72,6 +73,5 @@
   (set ((json/read-str ( (client/get (str twinword-link word) {:as :json, :headers headers}) :body)) "associations_array")))
 
 (defn fetch-rels-wordsapi [word]
-  (println "pulling data from server")
   (def results ((json/read-str ((client/get (str wordsapi-link word) {:as :json, :headers headers}) :body)) "results"))
   (set (filter one-word? (reduce concat (map get-all-rels results)))))
