@@ -10,11 +10,17 @@
 
 (def headers {"X-Mashape-Key" config/token, "Accept" "application/json"})
 (def link "https://wordsapiv1.p.mashape.com/words/")
+(def cache "cache")
 
 
 (defn get-relations
   [word]
-  (def word-file (str "_data/" word ".txt"))
+  
+  ;create the cache folder if not exist
+  (if (not (.exists (clojure.java.io/as-file cache)))
+    (.mkdir (java.io.File. cache)))
+
+  (def word-file (str cache "/" word ".txt"))
   
   (def exists (.exists (clojure.java.io/as-file word-file)))
   
