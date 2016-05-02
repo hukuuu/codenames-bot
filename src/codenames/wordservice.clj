@@ -9,10 +9,12 @@
 (declare fetch-rels)
 (declare fetch-rels-wordsapi)
 (declare fetch-rels-twinword)
+(declare fetch-rels-webknox)
 
 (def headers {"X-Mashape-Key" config/token, "Accept" "application/json"})
 (def wordsapi-link "https://wordsapiv1.p.mashape.com/words/")
 (def twinword-link "https://twinword-word-associations-v1.p.mashape.com/associations/?entry=")
+(def webknox-link "https://webknox-words.p.mashape.com/words/")
 (def cache "cache")
 
 
@@ -67,11 +69,16 @@
 (defn fetch-rels [word]
   (set (concat 
         (fetch-rels-twinword word)
-        (fetch-rels-wordsapi word))))
+        (fetch-rels-wordsapi word)
+        (fetch-rels-webknox word))))
 
 (defn fetch-rels-twinword [word]
-  (set ((json/read-str ( (client/get (str twinword-link word) {:as :json, :headers headers}) :body)) "associations_array")))
+  ((json/read-str ((client/get (str twinword-link word) {:as :json, :headers headers}) :body)) "associations_array"))
 
 (defn fetch-rels-wordsapi [word]
   (def results ((json/read-str ((client/get (str wordsapi-link word) {:as :json, :headers headers}) :body)) "results"))
   (set (filter one-word? (reduce concat (map get-all-rels results)))))
+
+(defn fetch-rels-webknox [word]
+  (json/read-str ((client/get (str webknox-link word "/synonyms") {:as :json, :headers headers}) :body))) 
+  
