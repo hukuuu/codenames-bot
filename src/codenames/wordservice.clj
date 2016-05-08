@@ -20,21 +20,17 @@
 
 (defn get-relations
   [word]
-  
   ;create the cache folder if not exist
   (if (not (.exists (clojure.java.io/as-file cache)))
     (.mkdir (java.io.File. cache)))
 
   (def word-file (str cache "/" word ".txt"))
-  
   (def exists (.exists (clojure.java.io/as-file word-file)))
-  
   (if (not exists)
     (spit word-file (fetch-rels word)))
 
-  (read-string (slurp word-file))) 
+  (read-string (slurp word-file)))
 
-    
 (defn one-word?
   [word]
   (not (.contains word " ")))
@@ -67,7 +63,7 @@
 
 
 (defn fetch-rels [word]
-  (set (concat 
+  (set (concat
         (fetch-rels-twinword word)
         (fetch-rels-wordsapi word)
         (fetch-rels-webknox word))))
@@ -80,5 +76,4 @@
   (set (filter one-word? (reduce concat (map get-all-rels results)))))
 
 (defn fetch-rels-webknox [word]
-  (json/read-str ((client/get (str webknox-link word "/synonyms") {:as :json, :headers headers}) :body))) 
-  
+  (json/read-str ((client/get (str webknox-link word "/synonyms") {:as :json, :headers headers}) :body)))
